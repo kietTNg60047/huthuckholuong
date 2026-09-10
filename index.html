@@ -12,6 +12,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+}}
+</script>
 <style>
   :root{
     --ink:#0B0910; --ink2:#141119; --line:#2A2434;
@@ -167,6 +173,18 @@
     .only-desk{display:none} .only-mob{display:inline}
   }
 
+  /* ---- Khối 3D ---- */
+  .stage3d{position:relative;height:min(68vh,600px);margin:28px 0 0;overflow:hidden;
+           border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+           background:radial-gradient(ellipse at 50% 44%,#241B36 0%,#0B0910 70%)}
+  .stage3d canvas{opacity:0;transition:opacity .7s ease}
+  .stage3d.on canvas{opacity:1}
+  .stage3d-msg{position:absolute;inset:0;display:grid;place-items:center;margin:0;
+               padding:0 24px;text-align:center;color:var(--muted);font-size:15px;
+               pointer-events:none;line-height:1.6}
+  .stage3d-msg b{color:var(--gold);font-weight:600}
+  @media(max-width:620px){ .stage3d{height:min(58vh,460px)} }
+
   /* ---- Ván mẫu chạy từng bước ---- */
   .demo{margin:32px 0 0;background:#100D16;border:1px solid var(--line);
         border-radius:18px;overflow:hidden}
@@ -299,6 +317,25 @@
          lần bị bắt thứ mấy sẽ hạ bạn — bạn chỉ chưa biết mà thôi.</p>
     </div>
     <div class="dup"><img src="img/03-bom.jpg" alt="Cơ chế bom leo thang 1/3, 1/2, chết chắc" width="1080" height="1350" loading="lazy"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center">Xem tận nơi</p>
+    <h2 style="text-align:center">Cầm thử bằng mắt</h2>
+    <p class="lead" style="margin:0 auto;text-align:center">Mô hình dựng từ đúng file
+       thiết kế của bo mạch. Lá bài để cạnh cho thấy quả bom nhỏ tới mức nào.</p>
+  </div>
+  <div class="stage3d" id="stage3d" role="img"
+       aria-label="Mô hình 3D quả bom và bốn lá bài, xoay được">
+    <p class="stage3d-msg" id="stage3d-msg">Cuộn tới đây để tải mô hình 3D</p>
+  </div>
+  <div class="wrap">
+    <p class="hint">
+      <span class="only-desk">Kéo ngang để xoay</span>
+      <span class="only-mob">Vuốt ngang để xoay</span>
+    </p>
   </div>
 </section>
 
@@ -758,6 +795,36 @@
     } else {
       queue();
     }
+  })();
+
+  /* Khối 3D nặng ~350 KB (thư viện + mô hình). Chỉ nạp khi người xem cuộn tới,
+     nên ai không kéo xuống tới đó thì trang không tốn thêm byte nào. */
+  (function () {
+    var host = document.getElementById("stage3d"),
+        msg  = document.getElementById("stage3d-msg"),
+        done = false;
+    if (!host) return;
+
+    function boot() {
+      if (done) return;
+      done = true;
+      msg.textContent = "Đang tải mô hình 3D…";
+      import("./m/scene.js")
+        .then(function (m) { return m.start(host, function (t) { msg.textContent = t; }); })
+        .then(function () { host.classList.add("on"); msg.textContent = ""; })
+        .catch(function (err) {
+          msg.innerHTML = "<b>Trình duyệt này chưa xem được mô hình 3D.</b><br>" +
+                          "Ảnh chụp thật ở phía trên vẫn xem bình thường.";
+          console.error(err);
+        });
+    }
+
+    if (window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); boot(); }
+      }, { rootMargin: "300px" });
+      io.observe(host);
+    } else { boot(); }
   })();
 
   (function () {
