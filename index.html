@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hư Thực Khó Lường — board game bài + quả bom thật</title>
+<meta name="description" content="Bộ bài bluff 20 lá cho 4 người, đi kèm một thiết bị gỡ bom tự thiết kế. Bị bắt nói dối là phải bấm 1 trong 3 nút.">
+<meta property="og:title" content="Hư Thực Khó Lường">
+<meta property="og:description" content="Bị bắt nói dối là phải gỡ bom. Ba nút, một nút cho nổ, và quả bom không reset.">
+<meta property="og:image" content="img/01-hero.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0910; --ink2:#141119; --line:#2A2434;
+    --gold:#E8C97A; --gold-dim:#9C8046;
+    --fg:#EDE9E2; --muted:#9A93A6; --red:#D84434; --violet:#CAA6FA;
+    --wrap:920px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--fg);
+       font:16px/1.65 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+       -webkit-font-smoothing:antialiased}
+  /* height:auto là BẮT BUỘC. Thẻ <img> có sẵn width/height để trình duyệt
+     giữ chỗ trước khi ảnh tải xong; nếu thiếu dòng này thì bề rộng co theo
+     màn hình còn chiều cao vẫn giữ nguyên 1350px -> ảnh bị kéo dãn dọc. */
+  img{max-width:100%;height:auto;display:block;border-radius:10px}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
+  .eyebrow{font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+           color:var(--gold);font-weight:600;margin:0 0 14px}
+  h1{font-family:"Playfair Display",Georgia,serif;font-weight:700;
+     font-size:clamp(38px,9vw,74px);line-height:1.05;margin:0 0 10px;letter-spacing:.01em}
+  h2{font-family:"Playfair Display",Georgia,serif;font-weight:700;
+     font-size:clamp(27px,5.2vw,42px);line-height:1.15;margin:0 0 16px}
+  h3{font-size:19px;font-weight:700;margin:0 0 8px}
+  p{margin:0 0 16px}
+  .lead{font-size:clamp(17px,2.6vw,21px);color:#D6D1DE;max-width:34em}
+  .muted{color:var(--muted)}
+
+  header{position:relative;padding:76px 0 0;text-align:center;overflow:hidden}
+  header::before{content:"";position:absolute;inset:-30% -20% 40%;
+    background:radial-gradient(ellipse at 50% 0%,#2A1F3E 0%,transparent 62%);pointer-events:none}
+  header .wrap{position:relative}
+  .script{font-family:"Playfair Display",Georgia,serif;font-style:italic;
+          font-size:clamp(19px,3.4vw,26px);color:var(--gold);margin:0 0 26px}
+  .hero-img{margin:38px auto 0;max-width:560px}
+
+  section{padding:72px 0}
+  section+section{border-top:1px solid var(--line)}
+  .grid{display:grid;gap:38px;align-items:center}
+  @media(min-width:760px){
+    .grid{grid-template-columns:1fr 1fr;gap:52px}
+    .grid.flip>div:first-child{order:2}
+  }
+
+  .odds{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
+  .odds li{display:flex;align-items:center;gap:16px;padding:15px 18px;
+           background:var(--ink2);border:1px solid var(--line);border-radius:12px}
+  .odds b{font-family:"Playfair Display",serif;font-size:30px;min-width:72px;line-height:1}
+  .odds span{font-size:15px;color:#C9C3D3}
+  .o1 b{color:var(--gold)} .o2 b{color:#F0A842} .o3 b{color:var(--red)}
+  .o3{border-color:#4A211C}
+
+  ol.steps{list-style:none;counter-reset:s;padding:0;margin:0}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 20px 60px;font-size:17px}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;
+    width:38px;height:38px;border:1px solid var(--gold-dim);border-radius:50%;
+    display:grid;place-items:center;font-family:"Playfair Display",serif;
+    font-size:19px;color:var(--gold)}
+
+  .note{border:1px solid #543C7A;background:#1B1528;border-radius:14px;padding:20px 22px;margin:26px 0 0}
+  .note h3{color:var(--violet)}
+  .plain{border:1px solid var(--line);background:var(--ink2);border-radius:14px;padding:24px}
+
+  .cta{text-align:center;padding:84px 0 96px;
+       background:radial-gradient(ellipse at 50% 100%,#2C1B22 0%,transparent 66%)}
+  .btn{display:inline-block;background:var(--gold);color:#17120A;font-weight:700;
+       font-size:18px;padding:17px 42px;border-radius:999px;text-decoration:none;
+       border:0;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px rgba(232,201,122,.6)}
+  .btn[data-off]{background:#3A3345;color:#9A93A6;cursor:not-allowed}
+  .fineprint{font-size:14px;color:var(--muted);margin-top:18px}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 56px;
+         text-align:center;font-size:14px;color:var(--muted)}
+  /* ---- Bốn lá bài: lướt tới đâu, tiểu sử đổi theo tới đó ---- */
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:34px 0 0}
+  .card{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;
+        font:inherit;cursor:pointer;display:block;text-align:center;
+        transition:transform .22s ease}
+  /* Vien va bong dat tren .ph chu khong dat tren <img>: .ph co overflow:hidden
+     de cat vet sang, ma overflow chi cat con -> vien cua chinh .ph van hien. */
+  .card .ph{position:relative;display:block;overflow:hidden;border-radius:10px;
+            box-shadow:0 12px 28px -16px #000;
+            outline:2px solid transparent;outline-offset:4px;
+            transition:box-shadow .24s ease,outline-color .24s ease}
+  .card img{width:100%;border-radius:10px}
+  /* Vệt sáng quét chéo — bài in thật có cán bóng, đây là mô phỏng lúc nghiêng lá. */
+  .card .ph::after{content:"";position:absolute;inset:-30% -60%;pointer-events:none;
+    background:linear-gradient(104deg,transparent 42%,rgba(255,255,255,.40) 50%,
+               rgba(255,255,255,.06) 55%,transparent 62%);
+    transform:translateX(-115%)}
+  .card b{display:block;margin:14px 0 2px;font-size:15px;letter-spacing:.07em;
+          opacity:.5;transition:opacity .22s ease,text-shadow .24s ease}
+  .card small{display:block;color:var(--muted);font-size:13px;line-height:1.4;
+              opacity:.5;transition:opacity .22s ease}
+  .card.on{transform:translateY(-10px);animation:pop .38s cubic-bezier(.2,.9,.3,1)}
+  .card.on .ph{outline-color:var(--c,var(--gold));
+               box-shadow:0 26px 50px -14px var(--cg,rgba(232,201,122,.45))}
+  .card.on .ph::after{animation:sweep .68s cubic-bezier(.3,.7,.4,1)}
+  .card.on b{opacity:1;text-shadow:0 0 20px var(--cg,transparent)}
+  .card.on small{opacity:1}
+  .card:active{transform:translateY(-5px) scale(.972);transition-duration:.08s}
+  .card:focus-visible .ph{outline-color:var(--gold)}
+  @keyframes sweep{from{transform:translateX(-115%)} to{transform:translateX(115%)}}
+  @keyframes pop{
+    0%  {transform:translateY(-10px) scale(1)}
+    42% {transform:translateY(-15px) scale(1.038)}
+    100%{transform:translateY(-10px) scale(1)}}
+  /* Noi dung bang tieu su troi len moi lan doi nhan vat. */
+  .bio-in{animation:bioIn .34s cubic-bezier(.2,.85,.3,1)}
+  @keyframes bioIn{from{opacity:0;transform:translateY(12px)}}
+  /* Ai bat che do giam chuyen dong thi tat het, giu nguyen phan doi mau. */
+  @media(prefers-reduced-motion:reduce){
+    .card,.card.on,.card .ph::after,.bio-in,.pile img,.shout,
+    .btn3.blink span{animation:none!important}
+    .card,.card .ph,.card b,.card small,.bio{transition-duration:.01ms!important}
+  }
+  .hint{text-align:center;color:var(--muted);font-size:14px;margin:24px 0 0}
+  .only-desk{display:inline} .only-mob{display:none}
+
+  /* Bảng tiểu sử nằm cố định dưới hàng bài, chỉ đổi nội dung.
+     min-height giữ chiều cao ổn định để trang không giật khi đổi nhân vật. */
+  .bio{margin:26px 0 0;background:#141119;border:1px solid var(--line);
+       border-left:3px solid var(--gold-dim);border-radius:16px;
+       padding:26px 28px;min-height:296px;
+       transition:border-left-color .22s ease}
+  .bio h3{font-family:"Playfair Display",Georgia,serif;font-size:30px;margin:0 0 4px}
+  .bio .sub{color:var(--muted);margin:0 0 16px}
+  .bio p{margin:0 0 14px}
+  .bio p:last-of-type{margin-bottom:0}
+  .tag{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+       border:1px solid var(--line);border-radius:999px;padding:5px 13px;
+       margin:0 8px 14px 0;color:var(--muted)}
+  .quote{border-left:2px solid var(--gold-dim);padding-left:16px;margin:18px 0 0;
+         font-family:"Playfair Display",Georgia,serif;font-style:italic;
+         font-size:17px;color:var(--gold)}
+  .ingame{margin:18px 0 0;padding:15px 17px;border-radius:12px;
+          background:#1B1528;border:1px solid #3E3352;font-size:15px}
+  .ingame b{color:var(--gold)}
+  .ingame.wild{border-color:#543C7A}
+  .ingame.wild b{color:var(--violet)}
+
+  /* Điện thoại: 4 lá thành dải vuốt ngang, lá nào vào giữa màn hình thì sáng lên.
+     padding hai đầu bằng nửa màn hình trừ nửa lá -> lá đầu và lá cuối vẫn vào
+     được chính giữa. Âm margin để dải chạy tràn hết bề ngang. */
+  @media(max-width:759px){
+    .cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+           -webkit-overflow-scrolling:touch;scrollbar-width:none;
+           margin:30px -22px 0;padding:10px calc(50vw - 98px)}
+    .cards::-webkit-scrollbar{display:none}
+    .card{flex:0 0 196px;scroll-snap-align:center}
+    .bio{min-height:360px;padding:22px}
+    .only-desk{display:none} .only-mob{display:inline}
+  }
+
+  /* ---- Ván mẫu chạy từng bước ---- */
+  .demo{margin:32px 0 0;background:#100D16;border:1px solid var(--line);
+        border-radius:18px;overflow:hidden}
+  .seats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+         padding:18px 14px;border-bottom:1px solid var(--line);background:#141119}
+  .seat{text-align:center;opacity:.42;transition:opacity .25s ease}
+  .seat.act,.seat.blame{opacity:1}
+  .ava{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 8px;
+       border-radius:50%;border:2px solid var(--line);font-weight:700;font-size:17px;
+       color:var(--muted);
+       transition:border-color .25s ease,color .25s ease,box-shadow .25s ease}
+  .seat.act .ava{border-color:var(--gold);color:var(--gold);
+                 box-shadow:0 0 0 4px rgba(232,201,122,.13)}
+  .seat.blame .ava{border-color:var(--red);color:var(--red);
+                   box-shadow:0 0 0 4px rgba(216,68,52,.18)}
+  .seat b{display:block;font-size:14px}
+  .seat i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+
+  .felt{position:relative;min-height:326px;padding:20px 16px;
+        display:grid;place-items:center;align-content:center;gap:14px;
+        background:radial-gradient(ellipse at 50% 42%,#1B1527 0%,#0D0B12 74%)}
+  .trump{position:absolute;top:14px;left:14px;text-align:center}
+  .trump small{display:block;font-size:10px;letter-spacing:.16em;color:var(--gold);
+               margin-bottom:5px}
+  .trump img{width:58px;border-radius:6px;border:1px solid rgba(232,201,122,.45)}
+  .pile{display:flex;gap:10px;align-items:flex-end;min-height:152px}
+  .pile img{width:94px;border-radius:7px;box-shadow:0 14px 26px -14px #000;
+            animation:deal .4s cubic-bezier(.2,.85,.3,1)}
+  /* Khong dung fill-mode:both. Neu dat both ma keyframe dau co opacity:0 thi
+     animation khong chay -> phan tu ket o trang thai vo hinh. Bo both di thi
+     truoc va sau animation phan tu luon o trang thai binh thuong (hien ro). */
+  @keyframes deal{from{opacity:0;transform:translateY(-26px) rotate(-6deg)}}
+  .bubble{max-width:86%;text-align:center;font-size:15px;color:#DED8E5;
+          background:#231E30;border:1px solid var(--line);border-radius:14px;
+          padding:9px 15px}
+  .shout{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:34px;
+         color:var(--red);letter-spacing:.04em;
+         animation:shout .42s cubic-bezier(.2,1.2,.3,1)}
+  @keyframes shout{from{opacity:0;transform:scale(.6)}}
+
+  .dbomb{display:flex;gap:14px;padding:14px 18px;border-radius:14px;
+         background:#1A1722;border:1px solid rgba(232,201,122,.26)}
+  .btn3{width:46px;height:46px;border-radius:10px;background:#2F2D38;
+        display:grid;place-items:center;border:1px solid #4B4956}
+  .btn3 span{width:21px;height:21px;border-radius:50%;background:#3A3842;display:block;
+             transition:background .2s ease,box-shadow .2s ease}
+  .btn3.lit span{background:var(--red);box-shadow:0 0 15px rgba(216,68,52,.9)}
+  .btn3.blink span{animation:bl .5s steps(1) infinite}
+  @keyframes bl{0%,49%{background:var(--red);box-shadow:0 0 15px rgba(216,68,52,.9)}
+                50%,100%{background:#3A3842;box-shadow:none}}
+
+  .cap{margin:0;padding:18px 20px;font-size:16px;min-height:76px;
+       border-top:1px solid var(--line);background:#141119}
+  .cap b{color:var(--gold)}
+  .ctrl{display:flex;align-items:center;justify-content:center;gap:18px;
+        padding:0 20px 20px;background:#141119}
+  .ctrl button{width:42px;height:42px;border-radius:50%;background:#252131;
+               border:1px solid var(--line);color:var(--fg);font-size:18px;
+               cursor:pointer;line-height:1}
+  .ctrl button:disabled{opacity:.3;cursor:default}
+  .dots{display:flex;gap:7px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:#3B3547;display:block;
+          transition:background .2s ease}
+  .dots i.on{background:var(--gold)}
+
+  /* Luật chi tiết, gập lại cho ai muốn đọc kỹ */
+  .more{margin:26px 0 0;border:1px solid var(--line);border-radius:14px;
+        background:var(--ink2);overflow:hidden}
+  .more>summary{cursor:pointer;padding:16px 20px;font-weight:600;color:var(--gold);
+                list-style:none}
+  .more>summary::-webkit-details-marker{display:none}
+  .more>summary::after{content:" +";color:var(--muted)}
+  .more[open]>summary::after{content:" \2013"}
+  .more .in{padding:4px 20px 22px;border-top:1px solid var(--line)}
+  .more h4{margin:20px 0 8px;font-size:15px;letter-spacing:.1em;
+           text-transform:uppercase;color:var(--gold)}
+  .more ul{margin:0;padding-left:20px}
+  .more li{margin:0 0 8px}
+
+  @media(max-width:620px){
+    .felt{min-height:290px}
+    .pile img{width:78px}
+    .trump img{width:48px}
+    .shout{font-size:27px}
+    .seat b{font-size:13px}
+    .ava{width:38px;height:38px;font-size:15px}
+  }
+
+  /* Ảnh 03 và 04 chỉ nhắc lại nội dung đã có bằng chữ ngay bên cạnh.
+     Trên desktop chúng nằm cạnh nhau nên bổ trợ nhau; trên mobile cột gộp
+     lại thành đọc hai lần, nên ẩn đi cho trang gọn và nhẹ. */
+  @media(max-width:759px){ .dup{display:none} }
+  @media(max-width:520px){ section{padding:56px 0} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Board game bài + phần cứng tự thiết kế</p>
+    <h1>Hư Thực Khó Lường</h1>
+    <p class="script">Ai cũng bảo mình đang nói thật</p>
+    <p class="lead" style="margin:0 auto">Bị bắt nói dối là phải gỡ bom.
+       Ba nút, một nút cho nổ — và quả bom <strong>không reset</strong>.</p>
+    <div class="hero-img"><img src="img/01-hero.jpg" alt="Hai bo mạch bom nằm trong lòng bàn tay" width="1080" height="1350"></div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap grid">
+    <div>
+      <p class="eyebrow">Hình phạt</p>
+      <h2>Quả bom không reset</h2>
+      <p>Bo mạch tự vẽ, tự đi dây, tự đặt gia công, tự viết firmware.
+         Board rộng <strong>39 mm</strong> — chưa tới nửa cái thẻ ATM.</p>
+      <p>Ba nút, một nút giấu bom, chọn ngẫu nhiên mỗi ván. Bấm xong đèn
+         <strong>nhấp nháy 3 giây</strong> rồi mới báo kết quả.</p>
+      <p>Nút nào bấm mà an toàn thì tắt đèn vĩnh viễn, không ai bấm lại được nữa:</p>
+      <ul class="odds">
+        <li class="o1"><b>1/3</b><span>Người bị phạt đầu tiên</span></li>
+        <li class="o2"><b>1/2</b><span>Người thứ hai</span></li>
+        <li class="o3"><b>1/1</b><span>Người thứ ba — hết cửa</span></li>
+      </ul>
+    </div>
+    <div class="dup"><img src="img/03-bom.jpg" alt="Cơ chế bom leo thang 1/3, 1/2, chết chắc" width="1080" height="1350" loading="lazy"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap grid flip">
+    <div>
+      <p class="eyebrow">Luật chơi</p>
+      <h2>Hiểu trong 30 giây</h2>
+      <ol class="steps">
+        <li>Rút 1 lá làm <strong>CHỦ ĐẠO</strong>, lật ngửa cho cả bàn cùng thấy.</li>
+        <li>Chia hết 20 lá cho 4 người — mỗi người đúng 5 lá.</li>
+        <li>Đến lượt: úp 1 lá xuống và diễn như thể đó là lá chủ đạo.</li>
+        <li>Người kế tiếp được hô <strong>“NÓI DỐI!”</strong>, hoặc im lặng cho qua.</li>
+        <li>Ai sai thì người đó gỡ bom. Bắt hụt cũng phải gỡ.</li>
+      </ol>
+      <div class="note">
+        <h3>Moki luôn là thật</h3>
+        <p style="margin:0">Đánh Moki thì không bao giờ sai. Ai hô “nói dối” vào Moki
+           là tự đưa mình lên bom. Trong bộ có hai lá Moki.</p>
+      </div>
+
+      <details class="more">
+        <summary>Luật chi tiết — mở ra nếu muốn đọc kỹ</summary>
+        <div class="in">
+          <h4>Chuẩn bị</h4>
+          <ul>
+            <li>Bộ 20 lá: <b>6 Flora · 6 Nimbus · 6 Sparky · 2 Moki</b>. Đúng 4 người chơi.</li>
+            <li>Xáo bài, rút ngẫu nhiên 1 lá làm <b>chủ đạo</b>. Nếu rút trúng Moki thì trả lại,
+                xáo, rút lại cho tới khi ra một trong ba chất.</li>
+            <li>Lật ngửa lá chủ đạo cho cả bàn cùng thấy, rồi xáo lại cả bộ và chia đều —
+                mỗi người <b>đúng 5 lá</b>, chia hết cả bộ.</li>
+          </ul>
+
+          <h4>Lượt chơi</h4>
+          <ul>
+            <li>Lần lượt từng người. Đến lượt, bạn chọn 1 lá trong tay và <b>úp xuống</b>.</li>
+            <li>Không ai được nhìn thấy lá đó. Việc của bạn là làm cả bàn tin rằng đó là lá
+                chủ đạo — bằng ánh mắt, giọng nói, thái độ, tốc độ ra bài.</li>
+            <li>Điểm cốt lõi: bạn có thể đang nói thật nhưng phải khiến người khác nghĩ bạn
+                nói dối, hoặc ngược lại.</li>
+          </ul>
+
+          <h4>Thế nào là thật, thế nào là dối</h4>
+          <ul>
+            <li>Lá <b>đúng chất chủ đạo</b> → nói thật.</li>
+            <li>Hai chất còn lại → nói dối.</li>
+            <li><b>Moki luôn là thật</b>, bất kể chủ đạo là gì.</li>
+          </ul>
+
+          <h4>Quyền nghi ngờ</h4>
+          <ul>
+            <li>Chỉ <b>người kế tiếp</b> mới được vạch trần, bằng cách hô “NÓI DỐI!”.
+                Không hô thì ván chạy tiếp.</li>
+            <li>Vạch trần rồi thì lật lá đó lên kiểm tra.</li>
+            <li>Bắt <b>đúng</b> → người vừa đánh đi gỡ bom.</li>
+            <li>Bắt <b>hụt</b> → chính người vạch trần đi gỡ bom.</li>
+            <li>Vạch trần trúng Moki luôn bị tính là bắt hụt.</li>
+          </ul>
+
+          <h4>Gỡ bom</h4>
+          <ul>
+            <li>Bom có 3 nút, mỗi nút một đèn. Đúng <b>1 nút giấu bom</b>, chọn ngẫu nhiên mỗi ván.</li>
+            <li>Đèn sáng nghĩa là nút đó chưa ai bấm. Người bị phạt chọn một nút còn sáng.</li>
+            <li>Bấm xong đèn <b>nhấp nháy 3 giây</b> rồi mới báo kết quả.</li>
+            <li>Nếu an toàn: đèn nút đó <b>tắt vĩnh viễn</b>, không ai bấm lại được nữa.</li>
+            <li>Bom <b>không reset</b> giữa các lần phạt → người bị phạt lần 1 chịu 1/3,
+                lần 2 chịu 1/2, lần 3 thì không còn cửa nào.</li>
+          </ul>
+
+          <h4>Trúng bom và kết thúc</h4>
+          <ul>
+            <li>Trúng bom: còi kêu, người đó <b>bị loại</b> và dừng cuộc chơi. Toàn bộ đèn tắt
+                rồi sáng lại, bom về trạng thái ban đầu.</li>
+            <li>Nhấn <b>RESET</b> trên mạch để bắt đầu ván mới.</li>
+            <li><b>Sống sót cuối cùng thì thắng.</b></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+    <div class="dup"><img src="img/04-luat-choi.jpg" alt="Luật chơi Hư Thực Khó Lường" width="1080" height="1350" loading="lazy"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center">Một ván mẫu</p>
+    <h2 style="text-align:center">Xem thử một lượt</h2>
+    <p class="lead" style="margin:0 auto;text-align:center">Bốn người, một lá chủ đạo,
+       và một người sắp phải bấm nút.</p>
+
+    <div class="demo">
+      <div class="seats" id="d-seats"></div>
+      <div class="felt">
+        <div class="trump"><small>CHỦ ĐẠO</small>
+          <img src="img/sm-flora.jpg" alt="Lá chủ đạo Flora" width="300" height="497"></div>
+        <div class="pile" id="d-pile"></div>
+        <div id="d-say"></div>
+      </div>
+      <p class="cap" id="d-cap"></p>
+      <div class="ctrl">
+        <button id="d-prev" type="button" aria-label="Bước trước">&lsaquo;</button>
+        <span class="dots" id="d-dots"></span>
+        <button id="d-next" type="button" aria-label="Bước sau">&rsaquo;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap grid">
+    <div>
+      <p class="eyebrow">Bộ bài</p>
+      <h2>20 lá, in thật, cán bóng</h2>
+      <p>Khổ <strong>70 × 116 mm</strong> — khổ tarot, to hơn bài tây một chút,
+         cầm chắc tay và dễ giấu mặt bài hơn.</p>
+      <p class="muted">6 Flora · 6 Nimbus · 6 Sparky · 2 Moki</p>
+      <p>Ba chất chơi đúng luật. Một lá phá luật.</p>
+    </div>
+    <div><img src="img/02-bo-bai.jpg" alt="Bốn lá bài in thật cầm trên tay" width="1080" height="1350" loading="lazy"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center">Nhân vật</p>
+    <h2 style="text-align:center">Ba chất và một kẻ gian</h2>
+    <p class="lead" style="margin:0 auto;text-align:center">Ba chất chơi đúng luật. Một lá phá luật.</p>
+
+    <div class="cards" id="cards">
+      <button class="card" type="button" data-who="sparky">
+        <span class="ph"><img src="img/card-sparky.jpg" alt="Lá bài Sparky" width="560" height="928" loading="lazy"></span>
+        <b style="color:#EE9650">SPARKY</b><small>Corgi tia lửa</small>
+      </button>
+      <button class="card" type="button" data-who="nimbus">
+        <span class="ph"><img src="img/card-nimbus.jpg" alt="Lá bài Nimbus" width="560" height="927" loading="lazy"></span>
+        <b style="color:#B2C6F0">NIMBUS</b><small>Mèo mây lơ lửng</small>
+      </button>
+      <button class="card" type="button" data-who="flora">
+        <span class="ph"><img src="img/card-flora.jpg" alt="Lá bài Flora" width="560" height="927" loading="lazy"></span>
+        <b style="color:#98D898">FLORA</b><small>Thỏ nấm chữa lành</small>
+      </button>
+      <button class="card" type="button" data-who="moki">
+        <span class="ph"><img src="img/card-moki.jpg" alt="Lá bài Moki" width="560" height="927" loading="lazy"></span>
+        <b style="color:#CCA8F8">MOKI</b><small>Cáo biến hình tinh nghịch</small>
+      </button>
+    </div>
+    <div class="bio" id="bio"></div>
+    <p class="hint">
+      <span class="only-desk">Rê chuột qua từng lá để đọc tiểu sử</span>
+      <span class="only-mob">Vuốt ngang để xem từng lá</span>
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div style="max-width:640px;margin:0 auto 34px">
+      <p class="eyebrow" style="text-align:center">Nói thẳng</p>
+      <h2 style="text-align:center">Về bộ art</h2>
+      <div class="plain">
+        <p>Art hiện tại là <strong>bản dựng tạm bằng AI</strong>. Mình không định lấp liếm chuyện đó.</p>
+        <p>Mình làm phần cứng, không vẽ được, và chưa dám thuê hoạ sĩ khi còn chưa biết
+           game này có ai muốn chơi không.</p>
+        <p style="margin:0">Nếu đủ người quan tâm thì mình <strong>thuê hoạ sĩ vẽ lại toàn bộ</strong>.
+           Đó chính là lý do trang này tồn tại.</p>
+      </div>
+    </div>
+    <!-- Ảnh 05-nhan-vat.jpg đã được thay bằng khối 4 lá bài bấm được ở trên.
+         File đó vẫn còn trong ../out/ để dùng cho bài đăng Facebook. -->
+  </div>
+</section>
+
+<div class="cta">
+  <div class="wrap">
+    <p class="eyebrow">Còn thiếu đúng một thứ</p>
+    <h2>Bạn có muốn chơi cái này không?</h2>
+    <p class="lead" style="margin:0 auto 30px">Để lại tên nếu bạn muốn giữ một bộ.
+       Mình cần con số thật để quyết định có làm tiếp hay không.</p>
+    <a class="btn" id="cta" href="#" rel="noopener">Để dành cho tôi một bộ</a>
+    <p class="fineprint">Không bán · Không nhận cọc · Chỉ để đếm</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 6px">Hư Thực Khó Lường — bản thử nghiệm, 2026</p>
+    <p style="margin:0">Bo mạch, firmware và bộ bài do một người làm.</p>
+  </div>
+</footer>
+
+<script>
+  /* =======================================================================
+     SỬA ĐÚNG MỘT DÒNG DƯỚI ĐÂY: dán link Google Form vào giữa hai dấu nháy.
+     ======================================================================= */
+  var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScB69WjLNnbkhNLZgiLQTMtkRz3GZJK4e0YWXS3qfYlKHVFWA/viewform";
+
+  /* ---- Tiểu sử 4 nhân vật. Sửa chữ ở đây, không cần đụng vào phần dưới. ---- */
+  var LORE = {
+    sparky: {
+      name: "SPARKY", color: "#EE9650",
+      title: "Corgi tia lửa · The Spark Corgi",
+      tags: ["Hệ Lửa", "Corgi", "6 lá trong bộ"],
+      bio: [
+        "Sparky mang trong mình ngọn lửa nguyên thuỷ. Ngọn lửa trên đuôi cậu không phải lửa thường — nó là ý chí, là thứ không chịu tắt.",
+        "Cậu là đứa lao lên đầu tiên mỗi khi cả nhóm gặp chuyện. Hấp tấp, tay nhanh hơn đầu, nhưng chưa bao giờ bỏ ai lại phía sau. Kính phi công và khăn choàng đỏ lúc nào cũng ở trên người, vì Sparky luôn trong tư thế sắp lên đường."
+      ],
+      quote: "Even the smallest spark can light the way.",
+      game: "Một trong ba chất. Đánh Sparky khi lá chủ đạo <b>là</b> Sparky thì tính là nói thật — còn lại đều là nói dối."
+    },
+    nimbus: {
+      name: "NIMBUS", color: "#B2C6F0",
+      title: "Mèo mây lơ lửng · The Cloud Cat",
+      tags: ["Hệ Không khí", "Mèo mây", "6 lá trong bộ"],
+      bio: [
+        "Nimbus không đi bộ. Cơ thể nó tự cân bằng với không khí nên lúc nào cũng lơ lửng cách mặt đất một khoảng nhỏ, như đang ngủ giữa trời.",
+        "Càng thư giãn thì Nimbus càng bay cao — ngủ say quá có khi trôi lên tới trần nhà mà không hay. Lúc vui thì bay vòng vòng chọc cả nhóm rồi giả vờ như không làm gì. Lúc buồn thì mây quanh người xám lại, và nó chỉ muốn có ai đó ngồi cạnh. Không cần nói gì."
+      ],
+      quote: "Không phải lúc nào cũng cần phải chạy.",
+      game: "Một trong ba chất. Đánh Nimbus khi lá chủ đạo <b>là</b> Nimbus thì tính là nói thật — còn lại đều là nói dối."
+    },
+    flora: {
+      name: "FLORA", color: "#98D898",
+      title: "Thỏ nấm chữa lành · The Spore Bunny",
+      tags: ["Hệ Sinh mệnh", "Thỏ nấm", "6 lá trong bộ"],
+      bio: [
+        "Flora sinh ra từ một bông hoa mọc trên đỉnh Mẫu Bào Tử — cây nấm khổng lồ có rễ nối với toàn bộ khu rừng. Nên cô không hẳn là thỏ, cũng không hẳn là nấm. Cô là một phần của rừng.",
+        "Lần đầu cô dùng được phép là khi ôm một chú chim bị thương và khóc. Nước mắt rơi xuống đất, nấm mọc lên, hoa nở, vết thương khép lại. Cô hiểu ra rằng sức mạnh của mình không đến từ việc điều khiển sự sống, mà từ việc lắng nghe nó."
+      ],
+      quote: "Không phải mọi vết thương đều cần chữa bằng phép thuật. Đôi khi chỉ cần có ai đó ngồi bên cạnh.",
+      game: "Một trong ba chất. Đánh Flora khi lá chủ đạo <b>là</b> Flora thì tính là nói thật — còn lại đều là nói dối."
+    },
+    moki: {
+      name: "MOKI", color: "#CCA8F8",
+      title: "Cáo biến hình tinh nghịch · The Shapeshifting Fox",
+      tags: ["Biến hình", "Cáo linh", "2 lá trong bộ"],
+      bio: [
+        "Moki không đổi màu — nó đổi cả cấu trúc cơ thể. Tím sang mây trắng, mây trắng sang lửa, lửa sang cây cỏ. Thân như gel phát sáng, nổi bong bóng năng lượng, và cái đuôi xoắn lại thành đúng hình một dấu hỏi.",
+        "Đó là đứa mà cả nhóm không bao giờ đoán được sẽ biến thành cái gì tiếp theo. Tinh nghịch, láu cá, thích trêu chọc đồng đội — nhưng thực chất rất tình cảm."
+      ],
+      quote: "Không thích bị ràng buộc bởi một hình dạng cố định.",
+      game: "<b>Lá dại.</b> Moki không thuộc chất nào, nên đánh Moki thì <b>luôn</b> tính là nói thật, dù lá chủ đạo là gì. Ai hô “nói dối” vào Moki là tự đưa mình lên bom.",
+      wild: true
+    }
+  };
+
+  (function () {
+    var wrap = document.getElementById("cards"),
+        bio  = document.getElementById("bio"),
+        btns = [].slice.call(document.querySelectorAll(".card")),
+        cur  = null;
+
+    function show(key) {
+      if (key === cur) return;           // đang hiện rồi thì thôi, khỏi vẽ lại
+      var c = LORE[key];
+      if (!c) return;
+      cur = key;
+      btns.forEach(function (b) { b.classList.toggle("on", b.dataset.who === key); });
+      bio.style.borderLeftColor = c.color;
+      bio.innerHTML = '<div class="bio-in">' +
+        '<h3 style="color:' + c.color + '">' + c.name + "</h3>" +
+        '<p class="sub">' + c.title + "</p>" +
+        c.tags.map(function (t) { return '<span class="tag">' + t + "</span>"; }).join("") +
+        c.bio.map(function (t) { return "<p>" + t + "</p>"; }).join("") +
+        '<blockquote class="quote">“' + c.quote + '”</blockquote>' +
+        '<div class="ingame' + (c.wild ? " wild" : "") + '">' + c.game + "</div>" +
+        "</div>";
+    }
+
+    // Mỗi lá mang màu riêng của nhân vật: dùng cho viền, quầng sáng và bóng chữ.
+    function rgba(hex, a) {
+      var n = parseInt(hex.slice(1), 16);
+      return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+    }
+    btns.forEach(function (b) {
+      var c = LORE[b.dataset.who];
+      if (!c) return;
+      b.style.setProperty("--c", c.color);
+      b.style.setProperty("--cg", rgba(c.color, .42));
+    });
+
+    // Máy tính: rê chuột hoặc tab tới là đổi luôn, không cần bấm.
+    btns.forEach(function (b) {
+      ["mouseenter", "focus"].forEach(function (ev) {
+        b.addEventListener(ev, function () { show(b.dataset.who); });
+      });
+      // Chạm vào một lá thì đưa luôn lá đó vào giữa dải, cho khớp với cách vuốt.
+      b.addEventListener("click", function () {
+        show(b.dataset.who);
+        if (wrap.scrollWidth > wrap.clientWidth) {
+          b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+        }
+      });
+    });
+
+    // Điện thoại: lá nào gần tâm dải nhất thì lá đó đang được xem.
+    // Không tiết chế bằng requestAnimationFrame: trình duyệt vốn đã gộp sự kiện
+    // cuộn về một lần mỗi khung hình, mà đọc 4 toạ độ thì rẻ. Nếu tiết chế mà
+    // rAF không chạy (tab nền, chế độ tiết kiệm pin) thì hàm này kẹt luôn.
+    function nearest() {
+      var box = wrap.getBoundingClientRect(),
+          mid = box.left + box.width / 2,
+          best = null, bd = Infinity;
+      btns.forEach(function (b) {
+        var r = b.getBoundingClientRect(),
+            d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < bd) { bd = d; best = b; }
+      });
+      if (best) show(best.dataset.who);
+    }
+    wrap.addEventListener("scroll", nearest, { passive: true });
+
+    show("sparky");
+  })();
+
+  /* ---- Ván mẫu ----------------------------------------------------------
+     Mỗi bước mô tả TRẠNG THÁI ĐẦY ĐỦ của bàn chơi, không phải thao tác cộng dồn.
+     Nhờ vậy bấm tiến hay bấm lùi đều chỉ là vẽ lại, không cần hoàn tác gì.     */
+  var PLAYERS = ["An", "B\u00ecnh", "Chi", "D\u0169ng"];
+  var ROUND = [
+    { cap: 'R\u00fat 1 l\u00e1 l\u00e0m <b>ch\u1ee7 \u0111\u1ea1o</b> r\u1ed3i l\u1eadt ng\u1eeda. V\u00e1n n\u00e0y ch\u1ee7 \u0111\u1ea1o l\u00e0 <b>FLORA</b>. B\u1ed1n ng\u01b0\u1eddi, m\u1ed7i ng\u01b0\u1eddi 5 l\u00e1.',
+      hands: [5, 5, 5, 5], pile: [] },
+    { cap: '<b>An</b> \u00fap 1 l\u00e1 xu\u1ed1ng v\u00e0 n\u00f3i: \u201cFlora \u0111\u00e2y.\u201d',
+      act: 0, hands: [4, 5, 5, 5], pile: ["back"], say: "\u201cFlora \u0111\u00e2y.\u201d" },
+    { cap: '<b>B\u00ecnh</b> tin, cho qua. \u0110\u1ebfn l\u01b0\u1ee3t m\u00ecnh, B\u00ecnh c\u0169ng \u00fap 1 l\u00e1: \u201cFlora.\u201d',
+      act: 1, hands: [4, 4, 5, 5], pile: ["back", "back"], say: "\u201cFlora.\u201d" },
+    { cap: '<b>Chi</b> th\u1ea5y B\u00ecnh ng\u1eadp ng\u1eebng h\u01a1i l\u00e2u. Chi quy\u1ebft \u0111\u1ecbnh v\u1ea1ch tr\u1ea7n.',
+      act: 2, hands: [4, 4, 5, 5], pile: ["back", "back"], shout: "N\u00d3I D\u1ed0I!" },
+    { cap: 'L\u1eadt l\u00e1 c\u1ee7a B\u00ecnh ra \u2014 <b>SPARKY</b>, kh\u00f4ng ph\u1ea3i Flora. B\u00ecnh n\u00f3i d\u1ed1i th\u1eadt.',
+      blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"] },
+    { cap: 'B\u1eaft \u0111\u00fang, n\u00ean <b>B\u00ecnh</b> \u0111i g\u1ee1 bom. Ba n\u00fat, m\u1ed9t n\u00fat gi\u1ea5u bom.',
+      blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"], bomb: { lit: [1, 1, 1] } },
+    { cap: 'B\u00ecnh b\u1ea5m n\u00fat gi\u1eefa. \u0110\u00e8n <b>nh\u1ea5p nh\u00e1y 3 gi\u00e2y</b> r\u1ed3i m\u1edbi b\u00e1o k\u1ebft qu\u1ea3.',
+      blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"],
+      bomb: { lit: [1, 1, 1], press: 1, blink: 1 } },
+    { cap: 'An to\u00e0n. Nh\u01b0ng n\u00fat \u0111\u00f3 <b>t\u1eaft \u0111\u00e8n v\u0129nh vi\u1ec5n</b> \u2014 ng\u01b0\u1eddi b\u1ecb ph\u1ea1t ti\u1ebfp theo ch\u1ec9 c\u00f2n <b>2 c\u1eeda</b>.',
+      hands: [4, 4, 5, 5], pile: ["back", "sparky"], bomb: { lit: [1, 0, 1], press: 1 } }
+  ];
+  var HOLD = [3400, 2900, 3200, 2700, 3200, 2900, 3400, 4500];
+
+  (function () {
+    var seats = document.getElementById("d-seats"),
+        pile  = document.getElementById("d-pile"),
+        say   = document.getElementById("d-say"),
+        cap   = document.getElementById("d-cap"),
+        dots  = document.getElementById("d-dots"),
+        prev  = document.getElementById("d-prev"),
+        next  = document.getElementById("d-next");
+    if (!seats) return;
+
+    var at = 0, timer = 0, auto = true, sig = null;
+
+    seats.innerHTML = PLAYERS.map(function (n, i) {
+      return '<div class="seat" data-s="' + i + '">' +
+             '<span class="ava">' + n.charAt(0) + "</span>" +
+             "<b>" + n + "</b><i></i></div>";
+    }).join("");
+    dots.innerHTML = ROUND.map(function () { return "<i></i>"; }).join("");
+
+    var seatEls = [].slice.call(seats.children),
+        dotEls  = [].slice.call(dots.children);
+
+    function draw(i) {
+      var st = ROUND[i];
+      at = i;
+
+      seatEls.forEach(function (el, k) {
+        el.classList.toggle("act", st.act === k);
+        el.classList.toggle("blame", st.blame === k);
+        el.querySelector("i").textContent = (st.hands ? st.hands[k] : 5) + " l\u00e1";
+      });
+
+      // Chỉ dựng lại chồng bài khi nó thật sự đổi, để hiệu ứng chia bài
+      // không chạy lại mỗi lần bấm qua bấm lại.
+      var nowSig = (st.pile || []).join(",");
+      if (nowSig !== sig) {
+        sig = nowSig;
+        pile.innerHTML = (st.pile || []).map(function (c) {
+          var src = c === "back" ? "img/card-back.jpg" : "img/sm-" + c + ".jpg";
+          var alt = c === "back" ? "L\u00e1 b\u00e0i \u00fap xu\u1ed1ng" : "L\u00e1 Sparky \u0111\u01b0\u1ee3c l\u1eadt ra";
+          return '<img src="' + src + '" alt="' + alt + '" width="300" height="500">';
+        }).join("");
+      }
+
+      if (st.bomb) {
+        say.innerHTML = '<div class="dbomb">' + [0, 1, 2].map(function (k) {
+          var c = "btn3" + (st.bomb.lit[k] ? " lit" : "") +
+                  (st.bomb.blink && st.bomb.press === k ? " blink" : "");
+          return '<div class="' + c + '"><span></span></div>';
+        }).join("") + "</div>";
+      } else if (st.shout) {
+        say.innerHTML = '<div class="shout">' + st.shout + "</div>";
+      } else if (st.say) {
+        say.innerHTML = '<div class="bubble">' + st.say + "</div>";
+      } else {
+        say.innerHTML = "";
+      }
+
+      cap.innerHTML = st.cap;
+      dotEls.forEach(function (d, k) { d.classList.toggle("on", k === i); });
+      prev.disabled = i === 0;
+      next.innerHTML = i === ROUND.length - 1 ? "&#8635;" : "&rsaquo;";
+      next.setAttribute("aria-label", i === ROUND.length - 1 ? "Ch\u1ea1y l\u1ea1i" : "B\u01b0\u1edbc sau");
+    }
+
+    function go(i) {
+      draw((i + ROUND.length) % ROUND.length);
+      if (auto) queue();
+    }
+    function queue() {
+      clearTimeout(timer);
+      if (at < ROUND.length - 1) {
+        timer = setTimeout(function () { go(at + 1); }, HOLD[at]);
+      }
+    }
+    function stopAuto() { auto = false; clearTimeout(timer); }
+
+    prev.addEventListener("click", function () { stopAuto(); draw(Math.max(0, at - 1)); });
+    next.addEventListener("click", function () {
+      stopAuto();
+      draw(at === ROUND.length - 1 ? 0 : at + 1);
+    });
+
+    draw(0);
+
+    // Tự chạy khi người xem cuộn tới, chỉ chạy một lần.
+    if (window.IntersectionObserver) {
+      var seen = false;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && !seen && auto) { seen = true; queue(); }
+        });
+      }, { threshold: 0.35 });
+      io.observe(document.querySelector(".demo"));
+    } else {
+      queue();
+    }
+  })();
+
+  (function () {
+    var a = document.getElementById("cta");
+    if (FORM_URL) {
+      a.href = FORM_URL;
+      a.target = "_blank";
+    } else {
+      a.textContent = "Chưa gắn link Google Form";
+      a.setAttribute("data-off", "1");
+      a.addEventListener("click", function (e) { e.preventDefault(); });
+    }
+  })();
+</script>
+
+<!-- Đếm lượt truy cập (tuỳ chọn). Tạo tài khoản miễn phí ở goatcounter.com,
+     rồi bỏ dấu chú thích của thẻ script bên dưới và thay MA_CUA_BAN:
+     <script data-goatcounter="https://MA_CUA_BAN.goatcounter.com/count"
+             async src="//gc.zgo.at/count.js"></script>
+-->
+
+</body>
+</html>
