@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hư Thực Khó Lường — board game bài + quả bom thật</title>
-<meta name="description" content="Bộ bài bluff 20 lá cho 4 người, đi kèm một thiết bị gỡ bom tự thiết kế. Bị bắt nói dối là phải bấm 1 trong 3 nút.">
+<meta name="description" content="Bộ bài bluff 20 lá cho 4 người, đi kèm 4 quả bom tự thiết kế — mỗi người một quả. Bị bắt nói dối là phải bấm 1 trong 3 nút.">
 <meta property="og:title" content="Hư Thực Khó Lường">
-<meta property="og:description" content="Bị bắt nói dối là phải gỡ bom. Ba nút, một nút cho nổ, và quả bom không reset.">
+<meta property="og:description" content="Bị bắt nói dối là phải gỡ bom. Mỗi người một quả bom riêng, ba nút, một nút cho nổ.">
 <meta property="og:image" content="img/01-hero.jpg">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -184,6 +184,8 @@
                    box-shadow:0 0 0 4px rgba(216,68,52,.18)}
   .seat b{display:block;font-size:14px}
   .seat i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+  .deal{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+        color:var(--gold);font-weight:600;margin-top:3px}
 
   .felt{position:relative;min-height:326px;padding:20px 16px;
         display:grid;place-items:center;align-content:center;gap:14px;
@@ -270,7 +272,7 @@
     <h1>Hư Thực Khó Lường</h1>
     <p class="script">Ai cũng bảo mình đang nói thật</p>
     <p class="lead" style="margin:0 auto">Bị bắt nói dối là phải gỡ bom.
-       Ba nút, một nút cho nổ — và quả bom <strong>không reset</strong>.</p>
+       Mỗi người một quả riêng, ba nút, một nút cho nổ — và nó <strong>không reset</strong>.</p>
     <div class="hero-img"><img src="img/01-hero.jpg" alt="Hai bo mạch bom nằm trong lòng bàn tay" width="1080" height="1350"></div>
   </div>
 </header>
@@ -280,16 +282,21 @@
     <div>
       <p class="eyebrow">Hình phạt</p>
       <h2>Quả bom không reset</h2>
-      <p>Bo mạch tự vẽ, tự đi dây, tự đặt gia công, tự viết firmware.
-         Board rộng <strong>39 mm</strong> — chưa tới nửa cái thẻ ATM.</p>
+      <p><strong>Mỗi người một quả bom riêng.</strong> Trong hộp có bốn cái —
+         bo mạch tự vẽ, tự đi dây, tự đặt gia công, tự viết firmware.
+         Mỗi cái rộng <strong>39 mm</strong>, chưa tới nửa cái thẻ ATM.</p>
       <p>Ba nút, một nút giấu bom, chọn ngẫu nhiên mỗi ván. Bấm xong đèn
          <strong>nhấp nháy 3 giây</strong> rồi mới báo kết quả.</p>
-      <p>Nút nào bấm mà an toàn thì tắt đèn vĩnh viễn, không ai bấm lại được nữa:</p>
+      <p>Nút nào bấm mà an toàn thì tắt đèn vĩnh viễn. Quả bom của bạn nhớ hết những lần bạn bị bắt:</p>
       <ul class="odds">
-        <li class="o1"><b>1/3</b><span>Người bị phạt đầu tiên</span></li>
-        <li class="o2"><b>1/2</b><span>Người thứ hai</span></li>
-        <li class="o3"><b>1/1</b><span>Người thứ ba — hết cửa</span></li>
+        <li class="o1"><b>1/3</b><span>Lần bạn bị bắt đầu tiên</span></li>
+        <li class="o2"><b>1/2</b><span>Lần thứ hai</span></li>
+        <li class="o3"><b>1/1</b><span>Lần thứ ba — không còn cửa</span></li>
       </ul>
+      <p style="margin-top:18px">Nhân ba con số đó lại thì ra một điều lạ:
+         khả năng bạn chết ở lần bị bắt <strong>thứ nhất, thứ hai hay thứ ba
+         đều đúng bằng 1/3</strong>. Ngay từ đầu ván, quả bom đã bốc sẵn xem
+         lần bị bắt thứ mấy sẽ hạ bạn — bạn chỉ chưa biết mà thôi.</p>
     </div>
     <div class="dup"><img src="img/03-bom.jpg" alt="Cơ chế bom leo thang 1/3, 1/2, chết chắc" width="1080" height="1350" loading="lazy"></div>
   </div>
@@ -301,11 +308,11 @@
       <p class="eyebrow">Luật chơi</p>
       <h2>Hiểu trong 30 giây</h2>
       <ol class="steps">
-        <li>Rút 1 lá làm <strong>CHỦ ĐẠO</strong>, lật ngửa cho cả bàn cùng thấy.</li>
-        <li>Chia hết 20 lá cho 4 người — mỗi người đúng 5 lá.</li>
+        <li>Rút 1 lá làm <strong>CHỦ ĐẠO</strong>, lật ngửa cho cả bàn cùng thấy. Lá đó về tay <strong>người chia</strong>.</li>
+        <li>Chia nốt 19 lá còn lại. Cuối cùng ai cũng cầm đúng 5 lá.</li>
         <li>Đến lượt: úp 1 lá xuống và diễn như thể đó là lá chủ đạo.</li>
         <li>Người kế tiếp được hô <strong>“NÓI DỐI!”</strong>, hoặc im lặng cho qua.</li>
-        <li>Ai sai thì người đó gỡ bom. Bắt hụt cũng phải gỡ.</li>
+        <li>Ai sai thì người đó gỡ <strong>bom của mình</strong>. Bắt hụt cũng phải gỡ.</li>
       </ol>
       <div class="note">
         <h3>Moki luôn là thật</h3>
@@ -318,12 +325,28 @@
         <div class="in">
           <h4>Chuẩn bị</h4>
           <ul>
-            <li>Bộ 20 lá: <b>6 Flora · 6 Nimbus · 6 Sparky · 2 Moki</b>. Đúng 4 người chơi.</li>
+            <li>Một bộ gồm <b>20 lá bài</b> và <b>4 quả bom</b> — mỗi người giữ riêng một quả.</li>
+            <li>Bài chia làm: <b>6 Flora · 6 Nimbus · 6 Sparky · 2 Moki</b>. Đúng 4 người chơi.</li>
             <li>Xáo bài, rút ngẫu nhiên 1 lá làm <b>chủ đạo</b>. Nếu rút trúng Moki thì trả lại,
                 xáo, rút lại cho tới khi ra một trong ba chất.</li>
-            <li>Lật ngửa lá chủ đạo cho cả bàn cùng thấy, rồi xáo lại cả bộ và chia đều —
-                mỗi người <b>đúng 5 lá</b>, chia hết cả bộ.</li>
+            <li>Lật ngửa lá chủ đạo cho cả bàn cùng thấy. <b>Lá đó thuộc về người chia bài</b> —
+                đây là phần bù cho người chia, họ chắc chắn có sẵn một lá nói thật.</li>
+            <li>19 lá còn lại xáo và chia tiếp: người chia nhận thêm <b>4 lá</b>,
+                ba người kia nhận <b>5 lá</b>. Cuối cùng ai cũng cầm đúng 5 lá.</li>
           </ul>
+
+          <h4>Mẹo cho người chia bài</h4>
+          <p style="margin:0 0 10px">Người chia cầm chắc một lá nói thật. Dùng nó lúc nào là cả một ván cược:</p>
+          <ul>
+            <li><b>Đánh ra ngay lượt đầu.</b> An toàn tuyệt đối ở lượt mở màn — ai vạch trần
+                lượt đó là tự đưa mình lên bom. Đổi lại, từ lượt sau người chia không còn lá
+                an toàn nào, và cả bàn cũng đoán ra điều đó.</li>
+            <li><b>Giữ lại và diễn.</b> Đánh lá dối trước, để dành lá thật cho lúc bị nghi
+                nặng nhất. Rủi ro cao hơn nhiều, nhưng qua được thì có một lá cứu mạng
+                đúng vào lúc cần.</li>
+          </ul>
+          <p style="margin:14px 0 0"><b>Cả bàn đều biết người chia đang giữ lá chủ đạo.
+             Câu hỏi là: họ đã đánh nó ra chưa?</b></p>
 
           <h4>Lượt chơi</h4>
           <ul>
@@ -353,12 +376,15 @@
 
           <h4>Gỡ bom</h4>
           <ul>
-            <li>Bom có 3 nút, mỗi nút một đèn. Đúng <b>1 nút giấu bom</b>, chọn ngẫu nhiên mỗi ván.</li>
+            <li><b>Bom của ai thì người đó bấm.</b> Bom người này không ảnh hưởng gì tới bom người kia.</li>
+            <li>Mỗi quả có 3 nút, mỗi nút một đèn. Đúng <b>1 nút giấu bom</b>, chọn ngẫu nhiên mỗi ván.</li>
             <li>Đèn sáng nghĩa là nút đó chưa ai bấm. Người bị phạt chọn một nút còn sáng.</li>
             <li>Bấm xong đèn <b>nhấp nháy 3 giây</b> rồi mới báo kết quả.</li>
             <li>Nếu an toàn: đèn nút đó <b>tắt vĩnh viễn</b>, không ai bấm lại được nữa.</li>
-            <li>Bom <b>không reset</b> giữa các lần phạt → người bị phạt lần 1 chịu 1/3,
-                lần 2 chịu 1/2, lần 3 thì không còn cửa nào.</li>
+            <li>Bom <b>không reset</b> giữa các lần bị bắt → lần 1 chịu 1/3, lần 2 chịu 1/2,
+                lần 3 thì không còn cửa nào.</li>
+            <li>Nhân lại thì khả năng chết ở lần 1, lần 2 hay lần 3 <b>đều bằng 1/3</b>.
+                Và <b>không ai chịu nổi quá hai lần bị bắt</b>.</li>
           </ul>
 
           <h4>Trúng bom và kết thúc</h4>
@@ -404,7 +430,7 @@
   <div class="wrap grid">
     <div>
       <p class="eyebrow">Bộ bài</p>
-      <h2>20 lá, in thật, cán bóng</h2>
+      <h2>20 lá bài và 4 quả bom</h2>
       <p>Khổ <strong>70 × 116 mm</strong> — khổ tarot, to hơn bài tây một chút,
          cầm chắc tay và dễ giấu mặt bài hơn.</p>
       <p class="muted">6 Flora · 6 Nimbus · 6 Sparky · 2 Moki</p>
@@ -611,22 +637,25 @@
      Nhờ vậy bấm tiến hay bấm lùi đều chỉ là vẽ lại, không cần hoàn tác gì.     */
   var PLAYERS = ["An", "B\u00ecnh", "Chi", "D\u0169ng"];
   var ROUND = [
-    { cap: 'R\u00fat 1 l\u00e1 l\u00e0m <b>ch\u1ee7 \u0111\u1ea1o</b> r\u1ed3i l\u1eadt ng\u1eeda. V\u00e1n n\u00e0y ch\u1ee7 \u0111\u1ea1o l\u00e0 <b>FLORA</b>. B\u1ed1n ng\u01b0\u1eddi, m\u1ed7i ng\u01b0\u1eddi 5 l\u00e1.',
-      hands: [5, 5, 5, 5], pile: [] },
-    { cap: '<b>An</b> \u00fap 1 l\u00e1 xu\u1ed1ng v\u00e0 n\u00f3i: \u201cFlora \u0111\u00e2y.\u201d',
-      act: 0, hands: [4, 5, 5, 5], pile: ["back"], say: "\u201cFlora \u0111\u00e2y.\u201d" },
-    { cap: '<b>B\u00ecnh</b> tin, cho qua. \u0110\u1ebfn l\u01b0\u1ee3t m\u00ecnh, B\u00ecnh c\u0169ng \u00fap 1 l\u00e1: \u201cFlora.\u201d',
-      act: 1, hands: [4, 4, 5, 5], pile: ["back", "back"], say: "\u201cFlora.\u201d" },
-    { cap: '<b>Chi</b> th\u1ea5y B\u00ecnh ng\u1eadp ng\u1eebng h\u01a1i l\u00e2u. Chi quy\u1ebft \u0111\u1ecbnh v\u1ea1ch tr\u1ea7n.',
-      act: 2, hands: [4, 4, 5, 5], pile: ["back", "back"], shout: "N\u00d3I D\u1ed0I!" },
-    { cap: 'L\u1eadt l\u00e1 c\u1ee7a B\u00ecnh ra \u2014 <b>SPARKY</b>, kh\u00f4ng ph\u1ea3i Flora. B\u00ecnh n\u00f3i d\u1ed1i th\u1eadt.',
+    { cap: 'Rút 1 lá làm <b>chủ đạo</b> rồi lật ngửa. Ván này là <b>FLORA</b>. '
+         + 'Lá đó về tay <b>An</b> — người chia bài.',
+      act: 0, hands: [5, 5, 5, 5], pile: [] },
+    { cap: '<b>An</b> đang cầm chính lá chủ đạo. An đánh nó ra luôn cho chắc: “Flora đây.”',
+      act: 0, hands: [4, 5, 5, 5], pile: ["back"], say: "“Flora đây.”" },
+    { cap: '<b>Bình</b> tin, cho qua. Đến lượt mình, Bình cũng úp 1 lá: “Flora.”',
+      act: 1, hands: [4, 4, 5, 5], pile: ["back", "back"], say: "“Flora.”" },
+    { cap: '<b>Chi</b> thấy Bình ngập ngừng hơi lâu. Chi quyết định vạch trần.',
+      act: 2, hands: [4, 4, 5, 5], pile: ["back", "back"], shout: "NÓI DỐI!" },
+    { cap: 'Lật lá của Bình ra — <b>SPARKY</b>, không phải Flora. Bình nói dối thật.',
       blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"] },
-    { cap: 'B\u1eaft \u0111\u00fang, n\u00ean <b>B\u00ecnh</b> \u0111i g\u1ee1 bom. Ba n\u00fat, m\u1ed9t n\u00fat gi\u1ea5u bom.',
+    { cap: 'Bắt đúng, nên <b>Bình</b> gỡ <b>quả bom của mình</b>. '
+         + 'Đây là lần đầu Bình bị bắt, nên ba nút còn sáng cả.',
       blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"], bomb: { lit: [1, 1, 1] } },
-    { cap: 'B\u00ecnh b\u1ea5m n\u00fat gi\u1eefa. \u0110\u00e8n <b>nh\u1ea5p nh\u00e1y 3 gi\u00e2y</b> r\u1ed3i m\u1edbi b\u00e1o k\u1ebft qu\u1ea3.',
+    { cap: 'Bình bấm nút giữa. Đèn <b>nhấp nháy 3 giây</b> rồi mới báo kết quả.',
       blame: 1, hands: [4, 4, 5, 5], pile: ["back", "sparky"],
       bomb: { lit: [1, 1, 1], press: 1, blink: 1 } },
-    { cap: 'An to\u00e0n. Nh\u01b0ng n\u00fat \u0111\u00f3 <b>t\u1eaft \u0111\u00e8n v\u0129nh vi\u1ec5n</b> \u2014 ng\u01b0\u1eddi b\u1ecb ph\u1ea1t ti\u1ebfp theo ch\u1ec9 c\u00f2n <b>2 c\u1eeda</b>.',
+    { cap: 'An toàn. Nhưng nút đó <b>tắt vĩnh viễn</b> — lần sau Bình bị bắt thì chỉ còn '
+         + '<b>2 cửa</b>. Ba người kia vẫn còn nguyên bom của họ.',
       hands: [4, 4, 5, 5], pile: ["back", "sparky"], bomb: { lit: [1, 0, 1], press: 1 } }
   ];
   var HOLD = [3400, 2900, 3200, 2700, 3200, 2900, 3400, 4500];
@@ -646,7 +675,8 @@
     seats.innerHTML = PLAYERS.map(function (n, i) {
       return '<div class="seat" data-s="' + i + '">' +
              '<span class="ava">' + n.charAt(0) + "</span>" +
-             "<b>" + n + "</b><i></i></div>";
+             "<b>" + n + (i === 0 ? ' <span class="deal">chia bài</span>' : "") +
+             "</b><i></i></div>";
     }).join("");
     dots.innerHTML = ROUND.map(function () { return "<i></i>"; }).join("");
 
